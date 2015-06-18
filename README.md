@@ -45,7 +45,7 @@ If you want add a migration:
 lein rui-mig create
 ```
 
-It will be generat a script of src/projectname/migrations/dataetimexxxx.clj  and it's content like follow
+It will  generat a script of src/projectname/migrations/dataetimexxxx.clj  and it's content like follow
 ```clj
 (ns projectname.migrations.m20150618164213
             (:require [clojure.java.jdbc :as sql]
@@ -81,7 +81,7 @@ lein rui-mig #Default to run the new migration
 ```
 If you want deploy on jar (lein uberjar of the project to generate the file of jar)
 
-At first you must be add follow to project.clj on :dependencies
+At first you must add follow to project.clj on :dependencies
 ```clojure
 [org.clojure/java.jdbc "0.3.3"]
 [org.clojure/data.json "0.2.4"]
@@ -94,17 +94,17 @@ And then run
 ```
 lein rui-mig deploy 
 ``` 
-It will be generate the file of projectName.main.clj and add this projectName.main to project.clj :main
+It will  generate the file of projectName.main.clj and add this projectName.main to project.clj :main
 
 And then you run 
 ```
 lein  uberjar
 ```
-It will be generate a file of jar and you run 
+It will  generate a file of jar and you run 
 ```
  java -cp target/xxx.jar xxx.main  # To run migration by jar
 ```
-It will be  run migration by file of jar
+It will  run migration by file of jar
 
 
 ## Thanks
