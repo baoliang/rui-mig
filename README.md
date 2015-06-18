@@ -107,8 +107,8 @@ It will be generate a file of jar and you run
 It will be  run migration by file of jar
 
 
-## Thansk
+## Thanks
 
-Thannks for [Xiang tao Zhou](https://github.com/taojoe) and [中瑞财富](http://www.zrcaifu.com/) for permission me to share this lein plugin.
+ Thanks for [Xiang tao Zhou](https://github.com/taojoe) and [中瑞财富](http://www.zrcaifu.com/) for permission me to share this lein plugin.
 
 
