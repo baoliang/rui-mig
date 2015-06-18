@@ -31,10 +31,12 @@
                                          (sql/execute! db   (if (string? q) [q] q)))))
 
             (defn up[]
-              (execute-in-db! ))
+              (execute-in-db! ""))
 
             (defn down[]
-              )" (:group project) name))
+              
+              (execute-in-db! ""
+                              ))" (:group project) name))
 
 (defn deploy [project]
          (let [path (format "./src/%s/main" (:group project))
@@ -45,22 +47,30 @@
                                     (clojure.string/join "\n" (migrate/mig-list-to-require-string mig-list project))
                                     (str mig-list)
                                     (:group project)))
-           (println (format "创建了数据库部署脚本%s.clj" path))))
+           (println (format "It had created a deploing of database script %s.clj" path))))
 
 (defn rui-mig
-                                        ;插件执行入口
+  "It's run here start"                                      
   ([project command]
 
      (let [opts (:clj-sql-up project)
            path (str "./src/" (:group project) "/migrations/")]
        (migrate/init-dictory path)
        (cond
-        (= command "create") (let [name (str "m" (unparse custom-formatter (local-now)))]
-                               (create-template (str path name)
-                                                (template-create project name))
-                               (println (format "创建了数据库变更脚本文件%s.clj" name)))
-        (= command "deploy") (deploy project)
+        (= command "create") 
+        (let [name (str "m" (unparse custom-formatter (local-now)))]
+          (create-template (str path name)
+          (template-create project name))
+          (println (format "It  had created a  script of migration   %s.clj" name)))
+        (= command "deploy") 
+        (deploy project)
+        (= command "up") 
+         (let [opts (:clj-sql-up project)]
+           (migrate/migrate project 'up))
+        (= command "down") 
+          (let [opts (:clj-sql-up project)]
+            (migrate/migrate project 'down))
         )))
   ([project]
      (let [opts (:clj-sql-up project)]
-       (migrate/migrate project))))
+       (migrate/migrate project 'up))))

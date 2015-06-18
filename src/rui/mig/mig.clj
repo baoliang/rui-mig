@@ -60,10 +60,11 @@
                   )
               (do (println (str "Migrating: " file))
                   (sql/db-do-commands (get-database) (format "insert into  migrations(name) values('%s')"  file))
-                  (println (str "正在运行" file "脚本！"))))
+                  ))
+            (println (str "It's runing the " file " script！"))
             ((resolve (symbol symbole-file)))
           
-            (println (str file "脚本！运行结束")))
+            (println (str file "script！end of run.")))
           (catch Exception e (.printStackTrace e)
                              (if (= direction 'down)
                                (sql/insert! mig-db :migrations  {:name file})
@@ -71,34 +72,32 @@
                                  (println "faill")
                                  (println file)
                                  (sql/delete! mig-db :migrations ["name=?" file])
-                                 (throw (Exception. "出现了异常")))))))
+                                 (throw (Exception. "It had a exception")))))))
       (catch Exception e (.printStackTrace e)
-                         (println "退出异常")))))
+                         (println "THE Exception is quit！")))))
 
 
 (defn get-mig-list[project]
-  "获取所有数据变更脚本"
+  "Geting all scripts"
   (set (get-migration-files project (format "./src/%s/migrations" (:group project)))))
 
 (defn mig-list-to-require-string [mig-lsit project]
   (map #(format "[%s.migrations.%s]" (:group project) (first (clojure.string/split % #"\."))) mig-lsit))
 
 (defn get-uncompleted [project]
-  "获取未完成的脚本"
+  "Geting all not run script"
   (sort (set/difference (get-mig-list project)
                         (set (completed-migrations)))))
 
 
 
-(defn migrate [project]
+(defn migrate [project direction]
   (try
     (println "start migratetions")
     (sql/db-do-commands (get-database) "CREATE TABLE if not exists migrations (
                                         name character varying(100) NOT NULL DEFAULT ''
                                       );")
-    (run-migrations (get-uncompleted project)  'up project)
+    (run-migrations (get-uncompleted project)  direction project)
     (catch Exception e (.printStackTrace e))))
 
-(defn rollback [n]
-  (let [n (Long. (or n 1))]
-    (run-migrations  (take n (completed-migrations ))  'down)))
+
