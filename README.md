@@ -1,5 +1,5 @@
 # rui-mig
-A relationship of database migration plugin on the lein 
+A Leiningen plugin for relational-database migration
 ## Support 
 PostgreSQL and MySQL
 ## Usage
