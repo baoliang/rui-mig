@@ -45,7 +45,7 @@ If you want add a migration:
 lein rui-mig create
 ```
 
-It will be generat a script of src/rui/migrations/dataetimexxxx.clj  and it's content like follow
+It will be generat a script of src/projectname/migrations/dataetimexxxx.clj  and it's content like follow
 ```clj
 (ns projectname.migrations.m20150618164213
             (:require [clojure.java.jdbc :as sql]

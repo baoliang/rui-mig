@@ -3,7 +3,7 @@
   <groupId>rui-mig</groupId>
   <artifactId>rui-mig</artifactId>
   <packaging>jar</packaging>
-  <version>0.1.1</version>
+  <version>0.1.2</version>
   <name>rui-mig</name>
   <description>FIXME: write description</description>
   <url>http://example.com/FIXME</url>
@@ -16,7 +16,7 @@
   <scm>
     <connection>scm:git:git://github.com/baoliang/rui-mig.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/baoliang/rui-mig.git</developerConnection>
-    <tag>9f742ebca888950cf36f4003ed92d447ee87188a
+    <tag>e7cfedd89e5c8f84fba7bc33be803843693d3baf
 </tag>
     <url>https://github.com/baoliang/rui-mig</url>
   </scm>
@@ -94,14 +94,14 @@
       <version>9.2-1002.jdbc4</version>
     </dependency>
     <dependency>
-      <groupId>me.raynes</groupId>
-      <artifactId>fs</artifactId>
-      <version>1.4.4</version>
-    </dependency>
-    <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>5.1.25</version>
+    </dependency>
+    <dependency>
+      <groupId>me.raynes</groupId>
+      <artifactId>fs</artifactId>
+      <version>1.4.4</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
