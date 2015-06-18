@@ -3,7 +3,7 @@
   <groupId>rui-mig</groupId>
   <artifactId>rui-mig</artifactId>
   <packaging>jar</packaging>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
   <name>rui-mig</name>
   <description>FIXME: write description</description>
   <url>http://example.com/FIXME</url>
@@ -14,11 +14,11 @@
     </license>
   </licenses>
   <scm>
-    <connection>scm:git:git://github.com//.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com//.git</developerConnection>
-    <tag>a03e09b63df8152cd861cf77fb92d78c2b7fc603
+    <connection>scm:git:git://github.com/baoliang/rui-mig.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/baoliang/rui-mig.git</developerConnection>
+    <tag>9f742ebca888950cf36f4003ed92d447ee87188a
 </tag>
-    <url>https://github.com//</url>
+    <url>https://github.com/baoliang/rui-mig</url>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>

@@ -31,46 +31,40 @@
                                          (sql/execute! db   (if (string? q) [q] q)))))
 
             (defn up[]
-              (execute-in-db! ""))
-
-            (defn down[]
-              
-              (execute-in-db! ""
-                              ))" (:group project) name))
+              (execute-in-db! \"\"))
+          " (clojure.string/join "_" (clojure.string/split (:group project)  #"-"))  name))
 
 (defn deploy [project]
-         (let [path (format "./src/%s/main" (:group project))
+         (let [ 
+                _project-name (clojure.string/join "_" (clojure.string/split (:group project)  #"-"))
+               path (format "./src/%s/main" _project-name)
                mig-list (migrate/get-mig-list project)]
            (create-template path
                             (format (-> "deploy.clj" io/resource slurp)
-                                    (:group project)
+                                    _project-name 
                                     (clojure.string/join "\n" (migrate/mig-list-to-require-string mig-list project))
                                     (str mig-list)
-                                    (:group project)))
+                                    _project-name))
            (println (format "It had created a deploing of database script %s.clj" path))))
 
 (defn rui-mig
   "It's run here start"                                      
   ([project command]
-
      (let [opts (:clj-sql-up project)
-           path (str "./src/" (:group project) "/migrations/")]
+           project-name (:group project)
+           _project-name (clojure.string/join "_" (clojure.string/split project-name #"-"))
+           path (str "./src/" _project-name "/migrations/")]
        (migrate/init-dictory path)
        (cond
         (= command "create") 
-        (let [name (str "m" (unparse custom-formatter (local-now)))]
-          (create-template (str path name)
-          (template-create project name))
-          (println (format "It  had created a  script of migration   %s.clj" name)))
+          (let [name (str "m" (unparse custom-formatter (local-now)))]
+            (create-template (str path name)
+            (template-create project name))
+            (println (format "It  had created a  script of migration   %s.clj" name)))
         (= command "deploy") 
-        (deploy project)
-        (= command "up") 
-         (let [opts (:clj-sql-up project)]
-           (migrate/migrate project 'up))
-        (= command "down") 
-          (let [opts (:clj-sql-up project)]
-            (migrate/migrate project 'down))
+         (deploy project)
+        :else
+         (migrate/migrate project)
         )))
   ([project]
-     (let [opts (:clj-sql-up project)]
-       (migrate/migrate project 'up))))
+       (migrate/migrate project)))

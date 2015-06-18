@@ -1,4 +1,4 @@
-(defproject rui-mig "0.1.0"
+(defproject rui-mig "0.1.2"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -9,8 +9,9 @@
                   [org.clojure/data.json "0.2.4"]
                  [clj-time "0.6.0"]
                  [org.clojars.kbarber/postgresql "9.2-1002.jdbc4"]
+                    [mysql/mysql-connector-java "5.1.25"]
                  [me.raynes/fs "1.4.4"]
                  
-                  [mysql/mysql-connector-java "5.1.25"]
+               
                  [org.clojure/java.jdbc "0.3.2"]]
   :eval-in-leiningen true)

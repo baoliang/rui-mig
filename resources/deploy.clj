@@ -1,10 +1,10 @@
 (ns %s.main (:gen-class)
   (:require [clojure.java.jdbc :as sql]
-            [clj-time.local :as local]
-            [baotask.config :refer [config]]
             [clojure.set :as set]
+            [clojure.data.json :as json]
             %s))
-
+   (def config
+                (json/read-str (slurp "./config.json")))
 (def database
   {:subprotocol  (get-in config ["db" "subprotocol"])
    :subname  (str  (str "//" (get-in config ["db"  "host"]) ":" (get-in config ["db"  "port"]) "/" (get-in config ["db" "db-name"]) (if (= "mysql" (get-in config ["db" "subprotocol"])) "?useUnicode=true&characterEncoding=UTF-8" "")))
@@ -12,7 +12,7 @@
    :password (get-in config ["db" "password"])})
 
 (defn completed-migrations []
-  "获取已完成的脚本"
+  "Get all   script is  not over"
   (->> (sql/query database
                   ["SELECT name FROM migrations ORDER BY name DESC"])
        (map #(:name %%))
@@ -20,7 +20,7 @@
 
 (defn -main[& args]
   (try
-    (println "开始执行脚本!")
+    (println "Start execute  scrpt!")
     (sql/db-do-commands database "CREATE TABLE if not exists migrations (
                                         name character varying(100) NOT NULL DEFAULT ''
                                       );")
@@ -28,13 +28,13 @@
                                     (set (completed-migrations))))]
       (try
         (sql/db-do-commands database (format "insert into  migrations(name) values('%%s')" mig))
-        (println (str "正在运行" mig "脚本！"))
+        (println (str "It's runing the " mig " ！"))
         ((resolve (symbol (str "%s.migrations." (first (clojure.string/split mig #"\.")) "/up"))))
-        (println (str mig "脚本！运行结束"))
+        (println (str mig " script is over"))
         (catch Exception e (.printStackTrace e)
-                           (println (str mig "脚本出现了异常！"))
+                           (println (str mig " is have a error！"))
                            (sql/delete! database :migrations ["name=?" mig])
-                           (throw (Exception. "出现了异常")))))
+                           (throw (Exception. "It   had a error")))))
     (catch Exception e (.printStackTrace e)
-                       (println "出现异常退出本执行")
+                       (println "It had a error")
                        (System/exit 1))))

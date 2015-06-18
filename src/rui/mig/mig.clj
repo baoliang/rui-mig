@@ -14,6 +14,10 @@
   (if-not (fs/directory? path)
     (fs/mkdir path)))
 
+
+(defn get-source-dir [project-name]
+  (clojure.string/join "_" (clojure.string/split project-name #"-")))
+
 (defmacro fmt [^String string]
   (let [-re #"#\{(.*?)\}"
         fstr (clojure.string/replace string -re "%s")
@@ -33,7 +37,7 @@
 
 
 (defn get-migration-files
-  ([project] (get-migration-files (format "./src/%s/migrations" (:group project))))
+  ([project] (get-migration-files (format "./src/%s/migrations" (get-source-dir (:group project)))))
   ([project dir-name] (->> (io/file dir-name)
                    (.listFiles)
                    (map #(.getName %))
@@ -46,43 +50,38 @@
        vec))
 
 
-(defn run-migrations [files direction project]
+(defn run-migrations [files  project]
   (let [mig-db (get-database)]
     (try
       (doseq [file files]
         (try
-          (load-file (format "./src/%s/migrations/%s" (:group project) file))
+          (load-file (format "./src/%s/migrations/%s" (get-source-dir (:group project)) file))
           (let [migr-id file
-                symbole-file (format "%s.migrations.%s/%s" (:group project) (first (clojure.string/split file #"\.")) (name direction))]
-            (if (= direction 'down)
-              (do (println (str "Reversing: " file))
-                  (sql/delete! mig-db :migrations ["name=?" migr-id])
-                  )
-              (do (println (str "Migrating: " file))
-                  (sql/db-do-commands (get-database) (format "insert into  migrations(name) values('%s')"  file))
-                  ))
+                symbole-file (format "%s.migrations.%s/up" (get-source-dir (:group project)) (first (clojure.string/split file #"\.")))]
+            
+            (println (str "Migrating: " file))
+            (sql/db-do-commands (get-database) (format "insert into  migrations(name) values('%s')"  file))
             (println (str "It's runing the " file " script！"))
             ((resolve (symbol symbole-file)))
           
-            (println (str file "script！end of run.")))
+            (println (str file " script！end of run.")))
           (catch Exception e (.printStackTrace e)
-                             (if (= direction 'down)
-                               (sql/insert! mig-db :migrations  {:name file})
                                (do
                                  (println "faill")
                                  (println file)
                                  (sql/delete! mig-db :migrations ["name=?" file])
-                                 (throw (Exception. "It had a exception")))))))
+                                 (throw (Exception. "It had a exception"))))))
       (catch Exception e (.printStackTrace e)
                          (println "THE Exception is quit！")))))
 
 
 (defn get-mig-list[project]
   "Geting all scripts"
-  (set (get-migration-files project (format "./src/%s/migrations" (:group project)))))
+  
+  (set (get-migration-files project (format "./src/%s/migrations" (get-source-dir (:group project))))))
 
 (defn mig-list-to-require-string [mig-lsit project]
-  (map #(format "[%s.migrations.%s]" (:group project) (first (clojure.string/split % #"\."))) mig-lsit))
+  (map #(format "[%s.migrations.%s]" (get-source-dir (:group project)) (first (clojure.string/split % #"\."))) mig-lsit))
 
 (defn get-uncompleted [project]
   "Geting all not run script"
@@ -91,13 +90,13 @@
 
 
 
-(defn migrate [project direction]
+(defn migrate [project ]
   (try
     (println "start migratetions")
     (sql/db-do-commands (get-database) "CREATE TABLE if not exists migrations (
                                         name character varying(100) NOT NULL DEFAULT ''
                                       );")
-    (run-migrations (get-uncompleted project)  direction project)
+    (run-migrations (get-uncompleted project)   project)
     (catch Exception e (.printStackTrace e))))
 
 
