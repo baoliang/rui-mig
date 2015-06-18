@@ -67,9 +67,6 @@ It will be generat a script of src/rui/migrations/dataetimexxxx.clj  and it's co
               (execute-in-db! ""
                               ))
 
-            (defn down[]
-              (execute-in-db! ""
-                              ))
 
 ```
 You can wright scripts of sql to the funtion of up or down 
