@@ -70,7 +70,7 @@ It will  generat a script of src/projectname/migrations/dataetimexxxx.clj  and i
 
 
 ```
-You can wright scripts of sql to the funtion of up 
+You can write your sql-scripts into the generated `up` function
 
 
 
