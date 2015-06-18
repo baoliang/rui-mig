@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>rui-mig</groupId>
+  <groupId>org.clojars.bob-zhang</groupId>
   <artifactId>rui-mig</artifactId>
   <packaging>jar</packaging>
   <version>0.1.2</version>
   <name>rui-mig</name>
-  <description>FIXME: write description</description>
-  <url>http://example.com/FIXME</url>
+  <description>A relationship of database migration plugin on lein </description>
+  <url>https://github.com/baoliang/rui-mig</url>
   <licenses>
     <license>
       <name>Eclipse Public License</name>
@@ -16,7 +16,7 @@
   <scm>
     <connection>scm:git:git://github.com/baoliang/rui-mig.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/baoliang/rui-mig.git</developerConnection>
-    <tag>e7cfedd89e5c8f84fba7bc33be803843693d3baf
+    <tag>0361bca19e8995e741f7ee45063dcc7d913e28c3
 </tag>
     <url>https://github.com/baoliang/rui-mig</url>
   </scm>

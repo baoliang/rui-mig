@@ -1,6 +1,6 @@
-(defproject rui-mig "0.1.2"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+(defproject org.clojars.bob-zhang/rui-mig "0.1.2"
+  :description "A relationship of database migration plugin on lein "
+  :url "https://github.com/baoliang/rui-mig"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.5.1"]

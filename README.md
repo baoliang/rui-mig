@@ -8,7 +8,7 @@ __Leiningen__ ([via Clojars](https://clojars.org/rui-mig))
 
 Put one of the following into the `:plugins` vector of the `:user` profile in your `~/.lein/profiles.clj`:
 
-[![Clojars Project](http://clojars.org/rui-mig/latest-version.svg)](http://clojars.org/rui-mig)
+[![Clojars Project](https://clojars.org/org.clojars.bob-zhang/rui-mig/latest-version.svg)](https://clojars.org/org.clojars.bob-zhang/rui-mig)
 
 At first please create a file named config.json to store database infomation e.g
 MySQL
