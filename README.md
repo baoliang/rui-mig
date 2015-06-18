@@ -70,7 +70,7 @@ It will be generat a script of src/projectname/migrations/dataetimexxxx.clj  and
 
 
 ```
-You can wright scripts of sql to the funtion of up or down 
+You can wright scripts of sql to the funtion of up 
 
 
 
