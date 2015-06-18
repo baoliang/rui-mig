@@ -47,9 +47,9 @@ lein rui-mig create
 
 It will be generat a script of src/rui/migrations/dataetimexxxx.clj  and it's content like follow
 ```clj
-(ns xxx.migrations.m20150104114822
-  (:require 
-            [baotask.storage :as st]))
+(ns rui_mig_test.migrations.m20150618164213
+            (:require [clojure.java.jdbc :as sql]
+                      [clojure.data.json :as json]))
               (def config
                 (json/read-str (slurp "./config.json")))
 
@@ -61,11 +61,12 @@ It will be generat a script of src/rui/migrations/dataetimexxxx.clj  and it's co
           
             (defn execute-in-db! [ & queries]
               (doseq [q queries]
-                (sql/execute! database  (if (string? q) [q] q))))
+                (sql/with-db-transaction [db database]
+                                         (sql/execute! db   (if (string? q) [q] q)))))
 
             (defn up[]
-              (execute-in-db! ""
-                              ))
+              (execute-in-db! ""))
+          
 
 
 ```
