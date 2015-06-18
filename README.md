@@ -47,7 +47,7 @@ lein rui-mig create
 
 It will be generat a script of src/rui/migrations/dataetimexxxx.clj  and it's content like follow
 ```clj
-(ns rui_mig_test.migrations.m20150618164213
+(ns projectname.migrations.m20150618164213
             (:require [clojure.java.jdbc :as sql]
                       [clojure.data.json :as json]))
               (def config
