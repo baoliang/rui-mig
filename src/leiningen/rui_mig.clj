@@ -3,8 +3,7 @@
   (:use [clj-time.format]
         [clj-time.local])
   (:require [rui.mig.mig :as migrate]
-            [clojure.java.io :as io]
-            [baotask.config :as config]))
+            [clojure.java.io :as io]))
 
 
 (def custom-formatter (formatter-local "yyyyMMddHHmmss"))
@@ -13,23 +12,29 @@
   ;创建模板
   (spit (format "%s.clj" name) text))
 
-(def template-create
-  "(ns rui.migrations.%s
-    (:require [clojure.java.jdbc :as sql]))
-  
-    (defn execute-in-db! [ & queries]
-      (doseq [q queries]
-        (sql/execute! {:subprotocol  (get-in (config/config) ["db" "subprotocol"])
-                       :subname  (get-in (config/config) ["db" "db-name"])
-                       :user (get-in (config/config) ["db" "user"])
-                       :password (get-in (config/config) ["db" "paswrod"])} (if (string? q) [q] q))))
+(defn template-create [project name]
+  (format "(ns %s.migrations.%s
+            (:require [clojure.java.jdbc :as sql]
+                      [clojure.data.json :as json]))
+              (def config
+                (json/read-str (slurp \"./config.json\")))
 
-    (defn up[]
-      (execute-in-db!  ))
+            (def database
+                {:subprotocol  (get-in config [\"db\" \"subprotocol\"])
+                 :subname  (str  (str \"//\" (get-in config [\"db\"  \"host\"]) \":\" (get-in config [\"db\"  \"port\"]) \"/\" (get-in config [\"db\" \"db-name\"]) (if (= \"mysql\" (get-in config [\"db\" \"subprotocol\"])) \"?useUnicode=true&characterEncoding=UTF-8\" \"\")))
+                 :user (get-in config [\"db\" \"user\"])
+                 :password (get-in config [\"db\" \"password\"])})
+          
+            (defn execute-in-db! [ & queries]
+              (doseq [q queries]
+                (sql/with-db-transaction [db database]
+                                         (sql/execute! db   (if (string? q) [q] q)))))
 
-    (defn down[]
-      )"
-  )
+            (defn up[]
+              (execute-in-db! ))
+
+            (defn down[]
+              )" (:group project) name))
 
 (defn deploy [project]
          (let [path (format "./src/%s/main" (:group project))
@@ -52,7 +57,7 @@
        (cond
         (= command "create") (let [name (str "m" (unparse custom-formatter (local-now)))]
                                (create-template (str path name)
-                                                (format template-create name))
+                                                (template-create project name))
                                (println (format "创建了数据库变更脚本文件%s.clj" name)))
         (= command "deploy") (deploy project)
         )))

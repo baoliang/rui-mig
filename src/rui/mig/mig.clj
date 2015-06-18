@@ -3,7 +3,12 @@
             [bultitude.core :as b]
             [clojure.java.jdbc :as sql]
             [clojure.java.io :as  io]
+            [clojure.data.json :as json]
             [me.raynes.fs :as fs]))
+
+
+(def config
+ (json/read-str (slurp "./config.json")))
 
 (defn init-dictory [path]
   (if-not (fs/directory? path)
@@ -17,9 +22,14 @@
 
 (defn get-database
   "fetch database connection info given project.clj options hash"
-  [db-name]
-  (let [db-name (keyword (str db-name "db"))]
-    (-> "./config.json" slurp read-string db-name)))
+  []
+   {:subprotocol  (get-in config ["db" "subprotocol"])
+    :subname  (str  (str "//" (get-in config ["db"  "host"]) ":" (get-in config ["db"  "port"]) "/" (get-in config ["db" "db-name"]) (if (= "mysql" (get-in config ["db" "subprotocol"])) "?useUnicode=true&characterEncoding=UTF-8" "")))
+    :classname (if (= "mysql" (get-in config ["db" "subprotocol"]))
+                  "com.mysql.jdbc.Driver"
+                  "org.postgresql.Driver")
+   :user (get-in config ["db" "user"])
+   :password (get-in config ["db" "password"])})
 
 
 (defn get-migration-files
@@ -30,14 +40,14 @@
                    sort)))
 
 (defn completed-migrations []
-  (->> (sql/query (get-database "admin")
-                  ["SELECT name FROM rui_migrations ORDER BY name DESC"])
+  (->> (sql/query (get-database)
+                  ["SELECT name FROM migrations ORDER BY name DESC"])
        (map #(:name %))
        vec))
 
 
 (defn run-migrations [files direction project]
-  (let [mig-db (get-database "admin")]
+  (let [mig-db (get-database)]
     (try
       (doseq [file files]
         (try
@@ -46,21 +56,21 @@
                 symbole-file (format "%s.migrations.%s/%s" (:group project) (first (clojure.string/split file #"\.")) (name direction))]
             (if (= direction 'down)
               (do (println (str "Reversing: " file))
-                  (sql/delete! mig-db :rui_migrations ["name=?" migr-id])
+                  (sql/delete! mig-db :migrations ["name=?" migr-id])
                   )
               (do (println (str "Migrating: " file))
-                  (sql/db-do-commands (get-database "admin") (format "insert into  rui_migrations(name, start_time) values('%s', now())" file))
+                  (sql/db-do-commands (get-database) (format "insert into  migrations(name) values('%s')"  file))
                   (println (str "正在运行" file "脚本！"))))
             ((resolve (symbol symbole-file)))
-            (sql/db-do-commands (get-database "admin") (format "update rui_migrations set end_time=now() where name='%s'" file))
+          
             (println (str file "脚本！运行结束")))
           (catch Exception e (.printStackTrace e)
                              (if (= direction 'down)
-                               (sql/insert! mig-db :rui_migrations  {:name file})
+                               (sql/insert! mig-db :migrations  {:name file})
                                (do
                                  (println "faill")
                                  (println file)
-                                 (sql/delete! mig-db :rui_migrations ["name=?" file])
+                                 (sql/delete! mig-db :migrations ["name=?" file])
                                  (throw (Exception. "出现了异常")))))))
       (catch Exception e (.printStackTrace e)
                          (println "退出异常")))))
@@ -83,12 +93,9 @@
 (defn migrate [project]
   (try
     (println "start migratetions")
-    (sql/db-do-commands (get-database "admin") "CREATE TABLE if not exists `rui_migrations` (
-                                                `name` varchar(100) NOT NULL DEFAULT '',
-                                                `start_time` datetime DEFAULT NULL,
-                                                `end_time` datetime DEFAULT NULL,
-                                                UNIQUE KEY `name` (`name`)
-                                              ) ENGINE=InnoDB DEFAULT CHARSET=utf8;")
+    (sql/db-do-commands (get-database) "CREATE TABLE if not exists migrations (
+                                        name character varying(100) NOT NULL DEFAULT ''
+                                      );")
     (run-migrations (get-uncompleted project)  'up project)
     (catch Exception e (.printStackTrace e))))
 
