@@ -1,5 +1,5 @@
 # rui-mig
-A relationship of database migration plugin on lein 
+A relationship of database migration plugin on the lein 
 
 ## Usage
 
@@ -73,6 +73,6 @@ It will be  run migration by file of jar
 
 ## Thansk
 
-Thannks for Xiang tao Zhou and 中瑞财富 for permission me to share this lein plugin.
+Thannks for [Xiang tao Zhou](https://github.com/taojoe) and [中瑞财富](http://www.zrcaifu.com/) for permission me to share this lein plugin.
 
 
